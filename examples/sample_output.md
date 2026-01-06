@@ -1,2 +1,0 @@
-GEMINI_API_KEY=gemini_key_here
-ANTHROPIC_API_KEY=claude_key_here

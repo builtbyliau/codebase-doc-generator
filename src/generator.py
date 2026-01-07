@@ -6,7 +6,7 @@ from typing import Dict
 import google.generativeai as genai
 from dotenv import load_dotenv
 
-# Load environment variables
+# load environment variables
 load_dotenv()
 
 
@@ -21,12 +21,12 @@ def generate_readme(
             "❌ GEMINI_API_KEY not found in .env file. Please check your configuration."
         )
 
-    # Configure Gemini
+    # configure Gemini
     genai.configure(api_key=api_key)
-    # Using the flash model as requested for dev
-    model = genai.GenerativeModel("gemini-2.0-flash-exp")
+    # hardcoded to flash model as per MVP specs (Jan 2026)
+    model = genai.GenerativeModel("gemini-3-flash-preview")
 
-    # Build the prompt
+    # build the prompt
     prompt = f"""You are a technical documentation expert. Analyze this codebase and generate a comprehensive README.md.
 
 Repository URL: {repo_url}

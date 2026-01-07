@@ -14,7 +14,7 @@ def clone_repo(repo_url: str) -> Path:
     Clone a GitHub repository to a temporary directory.
     Returns Path object to the temp dir.
     """
-    # Use mkdtemp to create a unique, safe temporary directory
+    # use mkdtemp to create a unique, safe temporary directory
     temp_dir = tempfile.mkdtemp(prefix="repo_doc_gen_")
 
     print(f"⏳ Cloning repository: {repo_url}...")
@@ -22,7 +22,7 @@ def clone_repo(repo_url: str) -> Path:
         git.Repo.clone_from(repo_url, temp_dir)
         return Path(temp_dir)
     except Exception as e:
-        # If clone fails, clean up the empty dir immediately
+        # if clone fails, clean up the empty dir immediately
         if os.path.exists(temp_dir):
             shutil.rmtree(temp_dir)
         raise e
@@ -31,7 +31,7 @@ def clone_repo(repo_url: str) -> Path:
 def analyze_structure(repo_path: Path) -> Dict:
     """Analyze repository structure and file types."""
 
-    # File extensions we care about
+    # file extensions we care about
     SUPPORTED_EXTENSIONS = {".py", ".js", ".jsx", ".ts", ".tsx", ".json", ".md"}
 
     structure = {

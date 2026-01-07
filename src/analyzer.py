@@ -14,12 +14,17 @@ def clone_repo(repo_url: str) -> Path:
     Clone a GitHub repository to a temporary directory.
     Returns Path object to the temp dir.
     """
+    # validation
+    if not repo_url.startswith(("https://github.com/", "git@github.com:")):
+        raise ValueError("❌ Invalid GitHub URL. Must be a valid GitHub repository.")
+
     # use mkdtemp to create a unique, safe temporary directory
     temp_dir = tempfile.mkdtemp(prefix="repo_doc_gen_")
 
     print(f"⏳ Cloning repository: {repo_url}...")
     try:
-        git.Repo.clone_from(repo_url, temp_dir)
+        # shallow clone for speed
+        git.Repo.clone_from(repo_url, temp_dir, depth=1)
         return Path(temp_dir)
     except Exception as e:
         # if clone fails, clean up the empty dir immediately

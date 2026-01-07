@@ -1,6 +1,4 @@
-def main():
-    print("Hello from codebase-doc-generator!")
-
+from src.main import cli
 
 if __name__ == "__main__":
-    main()
+    cli()

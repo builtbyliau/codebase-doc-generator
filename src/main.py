@@ -74,5 +74,69 @@ def generate(repo_url: str, output: str):
             shutil.rmtree(repo_path)
 
 
+@cli.command()
+@click.argument("repo_url")
+def compare(repo_url: str):
+    """Compare existing README vs AI-generated README."""
+
+    repo_path = None
+    try:
+        # 1. clone
+        repo_path = clone_repo(repo_url)
+
+        # 2. find existing README (case insensitive search)
+        existing_content = ""
+        existing_file_name = "N/A"
+
+        for file in repo_path.iterdir():
+            if file.name.lower().startswith("readme"):
+                existing_file_name = file.name
+                try:
+                    with open(file, "r", encoding="utf-8", errors="replace") as f:
+                        existing_content = f.read()
+                except Exception:
+                    existing_content = "(Could not read file encoding)"
+                break
+
+        if existing_content:
+            click.echo(f"📄 Found existing: {existing_file_name}")
+        else:
+            click.echo("❌ No existing README found.")
+
+        # 3. generate new
+        click.echo("🔄 Generating AI version...")
+        structure = analyze_structure(repo_path)
+        samples = get_sample_files(repo_path)
+        new_content = generate_readme(structure, samples, repo_url)
+
+        # 4. display comparison (terminal summary)
+        click.echo("\n" + "=" * 50)
+        click.echo("📊 COMPARISON SUMMARY")
+        click.echo("=" * 50)
+
+        click.echo("\n--- [ORIGINAL START] ---")
+        click.echo(existing_content[:300] + "..." if existing_content else "(None)")
+
+        click.echo("\n--- [AI GENERATED START] ---")
+        click.echo(new_content[:300] + "...")
+
+        # 5. save files for deep dive
+        click.echo("\n" + "=" * 50)
+        click.echo("💾 SAVING FULL FILES FOR REVIEW")
+        with open("compare_original.md", "w", encoding="utf-8") as f:
+            f.write(existing_content if existing_content else "No original README.")
+        with open("compare_ai.md", "w", encoding="utf-8") as f:
+            f.write(new_content)
+
+        click.echo("✅ Saved: 'compare_original.md' & 'compare_ai.md'")
+        click.echo("💡 Tip: Use VS Code 'Select for Compare' to see the diff!")
+
+    except Exception as e:
+        click.echo(f"❌ Error: {str(e)}", err=True)
+    finally:
+        if repo_path and repo_path.exists():
+            shutil.rmtree(repo_path)
+
+
 if __name__ == "__main__":
     cli()

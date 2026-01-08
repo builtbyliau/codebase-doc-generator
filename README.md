@@ -1,35 +1,44 @@
 # Codebase Documentation Generator
 
-## Problem
-Developers hate writing documentation. READMEs are outdated. New team members waste hours understanding codebases.
+Generate comprehensive README files for any GitHub repo in seconds using AI.
 
-## Solution
-AI-powered tool that analyzes a GitHub repo and auto-generates:
-- README with project overview
-- Architecture summary
-- API documentation
-- Setup instructions
+## Why Use This?
 
-## MVP Scope (Week 1)
-**IN SCOPE:**
-- ✅ Input: GitHub repo URL
-- ✅ Clone repo locally
-- ✅ Analyze file structure
-- ✅ Generate README using Claude API
-- ✅ Output: Markdown file
+- 🚀 **Fast**: Analyzes repos in under 60 seconds
+- 🎯 **Accurate**: Uses actual code analysis, not generic templates  
+- 🔒 **Privacy-First**: Runs locally, no data sent to third parties
+- 💰 **Cost-Effective**: Uses Gemini (free tier: 15 requests/min)
 
-**OUT OF SCOPE (Future):**
-- ❌ Architecture diagrams (too complex for MVP)
-- ❌ Multi-language support (start with Python/JS only)
-- ❌ GitHub integration (manual output is fine)
-- ❌ Custom templates
+## Quick Start
 
-## Tech Stack
+\`\`\`bash
+# Install
+git clone https://github.com/builtbyliau/codebase-doc-generator
+cd codebase-doc-generator
+uv sync
+
+# Generate docs
+uv run main.py generate https://github.com/user/repo
+\`\`\`
+
+## Example Output
+
+See [examples/sample_output.md](examples/sample_output.md) for a real example generated from the Spoon-Knife repository.
+
+## Roadmap
+
+- [ ] Support for more languages (Go, Rust, Java)
+- [ ] Architecture diagram generation
+- [ ] Integration with GitHub Actions
+- [ ] Custom templates
+
+## Built With
+
 - Python 3.11+
-- LLM Agnostic Design (Gemini Flash for Dev, support for Claude/Groq)
-- GitPython (for cloning repos)
-- Click (CLI interface)
-- uv (Dependency Management)
+- Gemini 3 Flash Preview
+- GitPython
+- Click
 
-## Success Criteria
-Can generate a useful README for any public Python/JavaScript repo in under 2 minutes.
+---
+
+Built by [@builtbyliau](https://github.com/builtbyliau) | [Report Issues](https://github.com/builtbyliau/codebase-doc-generator/issues)

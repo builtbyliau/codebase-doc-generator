@@ -1,6 +1,7 @@
 """Generate documentation using Gemini API."""
 
 import os
+import time
 from typing import Dict
 
 import google.generativeai as genai
@@ -27,38 +28,74 @@ def generate_readme(
     model = genai.GenerativeModel("gemini-3-flash-preview")
 
     # build the prompt
-    prompt = f"""You are a technical documentation expert. Analyze this codebase and generate a comprehensive README.md.
+    prompt = f"""You are a senior technical writer analyzing a codebase.
 
-Repository URL: {repo_url}
+Repository: {repo_url}
 
-Repository Structure:
+Codebase Analysis:
 - Total Files: {repo_structure["total_files"]}
-- File Types: {repo_structure["file_types"]}
-- Directory Structure (truncated):
-{chr(10).join(f"  - {path}" for path in repo_structure["directory_tree"][:50])}
+- Languages: {repo_structure["file_types"]}
+- Key Files Found: {", ".join(repo_structure["directory_tree"][:15])}
 
-Sample Code Files:
+Sample Code:
 {_format_sample_files(sample_files)}
 
-Generate a README with these sections:
-1. # Project Title (extract from repo URL or code)
-2. ## Description (what does this project do?)
-3. ## Features (bullet points)
-4. ## Installation (how to set up)
-5. ## Usage (how to run/use)
-6. ## Project Structure (overview of directories)
-7. ## Contributing (standard contribution guidelines)
+Generate a README.md with these SPECIFIC requirements:
 
-Use clear, concise language. Include code examples where relevant.
-Write in Markdown format.
+1. # Project Title
+   - Extract from repo name or main file
+   - Add a one-line tagline
+
+2. ## Description  
+   - 2-3 sentences explaining what this project does
+   - Be specific based on actual code, not generic
+
+3. ## Features
+   - List 3-5 key features you can see in the code
+   - Use bullet points
+
+4. ## Installation
+   - Provide actual commands based on language detected
+   - If Python: include pip/uv commands
+   - If JavaScript: include npm/yarn commands
+
+5. ## Usage
+   - Show a realistic example based on the code
+   - Include code block with actual syntax
+
+6. ## Project Structure
+   - Show directory tree (top-level only)
+   - Brief explanation of main folders
+
+7. ## Contributing
+   - Standard contribution guidelines
+
+CRITICAL RULES:
+- Only mention features you can verify in the code samples
+- Don't hallucinate technologies not present
+- Be specific, not generic
+- Use proper Markdown formatting
+- Keep it under 500 words
+
+Output only the Markdown, no preamble.
 """
 
     print("🤖 Generating documentation with Gemini...")
-    try:
-        response = model.generate_content(prompt)
-        return response.text
-    except Exception as e:
-        raise Exception(f"Gemini API Error: {str(e)}")
+    # add retry logic for API failures
+    max_retries = 3
+    for attempt in range(max_retries):
+        try:
+            response = model.generate_content(prompt)
+            return response.text
+        except Exception as e:
+            if attempt == max_retries - 1:
+                raise RuntimeError(
+                    f"❌ Failed to generate README after {max_retries} attempts: {e}"
+                )
+
+            wait_time = 2 * (attempt + 1)  # exponential backoff: 2s, 4s...
+            print(f"⚠️  Attempt {attempt + 1} failed. Retrying in {wait_time}s...")
+            time.sleep(wait_time)
 
 
 def _format_sample_files(samples: Dict[str, str]) -> str:

@@ -1,0 +1,19 @@
+title = "Custom Config"
+
+[allowlist]
+description = "Global allowlist"
+paths = [
+    '''\.env\.example$''',
+    '''uv\.lock$''',
+]
+
+[extend]
+useDefault = true 
+
+[[rules]]
+id = "gemini-api-key"
+description = "Detected a Google Gemini/AI Studio API Key"
+regex = '''(AIzaSy[A-Za-z0-9_-]{33}|GEMINI_API_KEY\s*=\s*['"]?[a-zA-Z0-9_\-\.]{5,}['"]?)'''
+secretGroup = 1
+entropy = 0.0
+keywords = ["aizasy", "gemini"]

@@ -11,7 +11,7 @@ Generate comprehensive README files for any GitHub repo in seconds using AI.
 
 ## Quick Start
 
-\`\`\`bash
+```bash
 # Install
 git clone https://github.com/builtbyliau/codebase-doc-generator
 cd codebase-doc-generator
@@ -19,7 +19,7 @@ uv sync
 
 # Generate docs
 uv run main.py generate https://github.com/user/repo
-\`\`\`
+```
 
 ## Example Output
 
